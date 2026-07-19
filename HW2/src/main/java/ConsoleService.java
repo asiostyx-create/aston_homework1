@@ -7,8 +7,9 @@ public class ConsoleService {
 
     public void run() {
         System.out.println("Запуск программы");
+        boolean isRunning = true;
 
-        while (true) {
+        while (isRunning) {
             printMenu();
             String choice = scanner.nextLine().trim();
 
@@ -19,7 +20,8 @@ public class ConsoleService {
                 case "4" -> updateUsers();
                 case "5" -> deleteUsers();
                 case "0" -> {
-                    break;
+                    System.out.println("Завершаем программу...");
+                    isRunning = false;
                 }
                 default -> System.out.println("Неверный ввод.");
             }

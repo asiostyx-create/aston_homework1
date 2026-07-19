@@ -2,7 +2,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UsersDaoImpl implements UsersDao {
     @Override
@@ -12,7 +11,7 @@ public class UsersDaoImpl implements UsersDao {
             session.save(users);
             tr.commit();
         } catch (Exception e) {
-            System.out.ptintln(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -23,7 +22,7 @@ public class UsersDaoImpl implements UsersDao {
             session.update(users);
             tr.commit();
         } catch (Exception e) {
-            System.out.ptintln(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -42,8 +41,9 @@ public class UsersDaoImpl implements UsersDao {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("From Users").list();
         } catch (Exception e) {
-            System.out.ptintln(e.getMessage());
+            System.out.println(e.getMessage());
             return List.of();
+        }
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UsersDaoImpl implements UsersDao {
             session.delete(users);
             tr.commit();
         } catch (Exception e) {
-            System.out.ptintln(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }
