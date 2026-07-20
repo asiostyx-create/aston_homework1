@@ -96,8 +96,8 @@ public class ConsoleService {
             String email = scanner.nextLine();
             users.setEmail(email);
             int age = readIntSafe("Введите новый возраст: ");
-            usersDao.update(users);
             users.setAge(age);
+            usersDao.update(users);
         } else System.out.println("Такой записи не существует.");
     }
 
