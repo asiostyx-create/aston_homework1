@@ -2,8 +2,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleService {
-    private final UsersDaoImpl usersDao = new UsersDaoImpl();
-    private final Scanner scanner = new Scanner(System.in);
+    private final UsersDao usersDao;
+    private final Scanner scanner;
+
+    public ConsoleService(UsersDao usersDao, Scanner scanner) {
+        this.usersDao = usersDao;
+        this.scanner = scanner;
+    }
 
     public void run() {
         System.out.println("Запуск программы");
