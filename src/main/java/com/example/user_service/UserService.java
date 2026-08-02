@@ -1,18 +1,26 @@
 package com.example.user_service;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.kafka.support.SendResult;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
+    private final KafkaTemplate<String, UserEvent> kafkaTemplate;
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, KafkaTemplate<String, UserEvent> kafkaTemplate) {
         this.userRepository = userRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public List<UserDto> findAll() {
@@ -33,6 +41,18 @@ public class UserService {
         }
         User user = new User(dto.username(), dto.email(), dto.age());
         User savedUser = userRepository.save(user);
+
+        UserEvent userEvent = new UserEvent(savedUser.getEmail(), savedUser.getUsername());
+        CompletableFuture<SendResult<String, UserEvent>> future = kafkaTemplate
+                .send("user-created-events-topic", userEvent);
+        future.whenComplete((result, exception) -> {
+            if(exception != null) {
+                log.error("Сообщение не отправлено: {}", exception.getMessage());
+            } else {
+                log.info("Сообщение отправлено: {}", userEvent.email());
+            }
+        });
+
         return toDto(savedUser);
     }
 
@@ -57,7 +77,20 @@ public class UserService {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("Пользователя с id " + id + " не существует");
         }
+
+        UserEvent userEvent = new UserEvent(findById(id).getEmail(), findById(id).getUsername());
+
         userRepository.deleteById(id);
+
+        CompletableFuture<SendResult<String, UserEvent>> future = kafkaTemplate
+                .send("user-deleted-events-topic", userEvent);
+        future.whenComplete((result, exception) -> {
+            if(exception != null) {
+                log.error("Сообщение не отправлено: {}", exception.getMessage());
+            } else {
+                log.info("Сообщение отправлено: {}", result.getRecordMetadata());
+            }
+        });
     }
 
     private UserDto toDto(User user) {
