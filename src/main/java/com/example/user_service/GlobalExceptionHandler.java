@@ -1,7 +1,7 @@
 package com.example.user_service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.hibernate.exception.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,13 +10,14 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
 
         Map<String, String> response = new HashMap<>();
         response.put("error", "Ошибка сервера");
-        response.put("message", e.getMessage());
+        response.put("message", "Упс! Произошла ощибка на сервере...");
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
@@ -51,7 +52,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             EntityNotFoundException.class,
             NoResourceFoundException.class})
-    public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException e) {
+    public ResponseEntity<Map<String, String>> handleEntityNotFound(Exception e) {
         log.error("Handle entityNotFoundException", e);
 
         Map<String, String> response = new HashMap<>();
@@ -64,7 +65,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             IllegalArgumentException.class,
             HttpMessageNotReadableException.class,
-            ConstraintViolationException.class
+            ConstraintViolationException.class,
     })
     public ResponseEntity<Map<String, String>> handleBadRequest(Exception e) {
         log.error("Bad Request", e);

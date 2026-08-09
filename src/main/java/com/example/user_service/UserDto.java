@@ -1,12 +1,23 @@
 package com.example.user_service;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
 import java.time.LocalDateTime;
 
-public class UserDto {
+@Relation(itemRelation = "user", collectionRelation = "users")
+@Schema(description = "Сущность пользователя")
+public class UserDto extends RepresentationModel<UserDto> {
+    @Schema(description = "Уникальный идентификатор")
     private Integer id;
+    @Schema(description = "Имя пользователя")
     private String username;
+    @Schema(description = "Email пользователя")
     private String email;
+    @Schema(description = "Возраст пользователя")
     private Integer age;
+    @Schema(description = "Время создания пользователя")
     private LocalDateTime createdAt;
 
     public UserDto(Integer id, String username, String email, Integer age, LocalDateTime createdAt) {

@@ -61,7 +61,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователя с id " + id + " не существует"));
 
-        if (userRepository.existsByEmail(dto.email())) {
+        if (userRepository.existsByEmail(dto.email()) && !user.getEmail().equals(dto.email())) {
             throw new IllegalArgumentException("Email " + dto.email() + " уже занят другим пользователем");
         }
 
