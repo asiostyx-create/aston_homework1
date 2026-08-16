@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping
-    @Operation(summary = "Содать пользователя", description = "Создает пользователя")
+    @Operation(summary = "Создать пользователя", description = "Создает пользователя")
     @ApiResponse(responseCode = "201", description = "Пользователь создан")
     @ApiResponse(responseCode = "400", description = "Ошибка валидации")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UpdatedUserDto dto) {
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Содать пользователя", description = "Создает пользователя")
+    @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя, если он найден в БД")
     @ApiResponse(responseCode = "204", description = "Пользователь удален")
     @ApiResponse(responseCode = "404", description = "Ошибка валидации")
     public ResponseEntity<Void> deleteUser(
